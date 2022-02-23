@@ -1,11 +1,33 @@
 import '../utils/Style/main.css'
+import { useEffect } from 'react'
+import {useHistory} from 'react-router-dom'
+import { useSelector, useStore } from 'react-redux'
+import { selectUser } from '../utils/selectors'
+import { getOrModifyUser } from '../utils/callMethod'
+
 
 function User() {
+  const userInfos = useSelector(selectUser)
+
+  const firstName = userInfos.data?.firstName
+  const lastName = userInfos.data?.lastName
+    
+  const store = useStore()
+  const history = useHistory()
+  
+  const token = userInfos.auth?.token
+  useEffect(() => {
+    const method = 'post'
+    const path = '/profile'
+    const body = {}
+    getOrModifyUser(store, method, path, body, token)
+  }, [store, token])
+
   return (
     <main className="main bg-dark">
       <div className="header">
-        <h1>Welcome back<br />Tony Jarvis!</h1>
-        <button className="edit-button">Edit Name</button>
+        <h1>Welcome back<br /> {firstName} {lastName} !</h1>
+        <button className="edit-button" onClick={()=>history.push('/profile')}>Edit Name</button>
       </div>
       <h2 className="sr-only">Accounts</h2>
       <section className="account">
